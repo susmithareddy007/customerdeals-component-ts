@@ -1,0 +1,44 @@
+import { Injectable } from '@angular/core';
+import { HttpClent. HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import {Observable, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { catchError } from 'rxjs/internal/operators/catchError';
+import { DealsForToday } from 'src/app/shared/models/dealsForToday';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class CustomerDealsService {
+    
+
+    private headers =new HttpHeaders({ 'Content-Type': 'application/json' });
+    constructor(private http: HttpClent){ }
+
+    getDealsForToday(): Observable<DealsForToday[]> {
+        const url = environment.sellerDealsAPIUrl + "/customerDealsForToday";
+        return this.http.get<DealsForToday[]>(url)
+        .pipe(catchError(this.handleError));
+    
+    }
+
+
+    private handleError(err:HttpErrorResponse) {
+        console.log(err)
+        let errMsg: String = '';
+        if (err.error instanceof Error) {
+            errMsg=err.error.message;
+            console.log(errMsg)
+        }
+         else if(typeof err.error === 'string'){
+            errMsg = JSON.parse(err.error).errorMessage
+         }
+        else {
+            if(typeof err.error == 0){
+            errMsg = "A connection to back end can not be established.";
+        } else {
+            errMsg =err.error.message;
+        }
+    }
+    return throwError(errMsg);
+}
+}
