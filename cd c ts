@@ -1,0 +1,110 @@
+import { Component,OnInit } from '@angular/core';
+import { CustomerDealsService } from './customer-deals.service';
+import { DealsForToday } from 'src/app/shared/models/dealsForToday';
+
+@Component({
+    selector: 'app-customer-deals',
+    templateUrl: './customer-deals.component.html',
+    styleUrls: ['./customer-deals.component.css']
+})
+export class CustomerDealsComponent implements OnInit{
+    
+    suucessMessage: string;
+    errorMessage:string;
+    current_page_pagination: number = 1;
+    productList:DealsForToday[];
+    dealList: Boolean;
+    selectedProduct: DealsForToday;
+    noOfProducts:number;
+    pages:number;
+    integerArray:number[];
+    integerArrayLength:number;
+    dealObject:DealsForToday;
+    tenList: DealsForToday[];
+    dummy2:any;
+
+    constructor(private customerDealsService: CustomerDealsService){}
+    ngOnInit(){
+        this.dealList=true;
+        this.customerDealsService.getDealsForToday().subscribe(
+            response=>{
+                this.productList=response;
+                this.timeCheck();
+                this.noOfProducts=this.productList.length;
+                this.noOfPages();
+                this.pageGeter();
+                this.integerArrayLength=this.integerArray.length;
+                this.pageMaker(1);
+                console.log(this.productList)
+            });
+            this.dealList=true
+            this.noOfProducts=this.productList.length;
+    }
+    dealDetails(product:DealsForToday){
+        this.dealList=false
+        this.selectedProduct=product
+    }
+    timeCheck(){
+        for(let deal of this.poductList){
+            let dealStartArr=deal.startDate;
+            let dealEndArr=deal.endDate;
+            deal.startDate= new Date(dealStartArr[0],dealStartArr[1]-1,dealStartArr[2],dealStartArr[3],dealStartArr[4]);
+            deal.endDate=new Date(dealEndArr[0],dealEndArr[1]-1,dealEndArr[2],dealEndArr[3],dealEndArr[4]);
+
+            
+            let presentDate=new Date();
+            
+            if(presentDate>deal.startDate && presentDate<deal.endDate){
+                deal.successMessage="Deal Is On";
+            } else if(presentDate > deal.endDate){
+                deal.successMessage="Deal Ended";
+            } else{
+                deal.successMessage="Deal Yet To Start";
+            }
+        }
+    }
+
+    // ***********************************
+    noOfPages(){
+        if(this.noOfProducts%10==0){
+            this.pages=this.noOfProducts/10;
+        }
+        else{
+            this.pages=((this.noOfProducts/10)-((this.noOfProducts%10)/10))+1;
+        }
+    }
+
+    pageGeter()
+    {
+        var m: number;
+        m=this.pages;
+        let numberList:number[]=[]
+        for(let i=0;i<m;i++){
+            numberList.push(i);
+        }
+        this.integerArray=numberList;
+    }
+    pageMaker(n: number){
+        var m:number;
+        if(n==this.integerArrayLength){
+            let newProductList:DealsForToday[]=[];
+            var k:number;
+            k=this.noOfProducts%10;
+            for(let i=0;i<k;i++){
+                m=((n*10)-10)+i;
+                this.dealObject=this.productList[m];
+                newProductList.push(this.dealObject);
+            }
+            this.tenList=newProductList;
+        }
+        else{
+            let newProductList: DealsForToday[]=[];
+            for(let i=0;i<10; i++){
+                m=((n*10)-10)+i;
+                this.dealObject=this.productList[m];
+                newProductList.push(this.dealObject);
+            }
+                this.tenList=newProductList;
+        }
+    }
+}
