@@ -1,0 +1,49 @@
+Package com. Infy .ekart .api;
+Import jave .util.list;
+@CrossOrigin
+@RestController
+
+@RequestMapping(value="/dealsForToday-api")
+@validated
+public class DealsForTodayAPI {
+@Autowired
+private DealsForTodayService dealsForTodayService ;
+
+@Autowired
+private Environment environment;
+
+static Log Logger=LogFactory.getLog (DealsForTodayAPI.class);
+
+@PostMapping(value="/dealsForToday")
+public ResponseEntity<DealsForTodayDTO> addProductToDealsForToday(@RequestBody @Valid DealsForTodaydTo dealsForTodayDTO) throws EkartException {
+Integer id=dealsForTodayService.addProductToDealsForToday(dealsForTodayDTO);
+String msg=environment.getProperty("DealsFor TodayAPI.PRODUCT_ADDED");
+dealsForToday To.setSuccessMessage(msg);
+dealsForTodayDTO.setDealId(id);
+return new ResponseEntity<>(dealsFor TodayDTO,HttpStatus.OK);
+}
+
+@GetMapping(value="/notinDeal/{sellerEmailId}/{pageNo}")
+
+public ResponseEntity<List<ProductDTO>> getProductNot InDeal(@PathVariable String sellerEmailid, @Pathvariable Integer pageNo) throws EkartException{
+
+return new Response Entity<>(dealsFor TodayService.getProductNot InDeal(sellerEmai1Id, pageNo), HttpStatus.OK);
+}
+
+@GetMapping(value="/withDeals/{sellerEmailId}/{pageNo}")
+public ResponseEntity<List<DealsFor Today DTO>> getProductwithDeals@pathvariable String sellerEmailId, PathVariable Integer pageNo) throws EkartException{
+
+return new Response Entity<>(dealsFor TodayService.getProductNot InDeal(sellerEmai1Id, pageNo), HttpStatus.OK);
+}
+
+@GetMapping(value="/withDeals/{pageNo}")
+public ResponseEntity<List<DealsForToday DTO>> getProductWithDealsFormAllsellers(@pathVariable Integer pageNo) throws EkartException{
+return new ResponseEntity<>(dealsForTodayService.getProductWithDealsFromAllsellers (pageNo).HttpStatus.ok);
+}
+
+
+
+
+
+
+ 
